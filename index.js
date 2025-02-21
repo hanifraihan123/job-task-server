@@ -30,6 +30,7 @@ async function run() {
       console.log("Pinged your deployment. You successfully connected to MongoDB!");
 
       const userCollection = client.db("job-task").collection("users");
+      const taskCollection = client.db("job-task").collection("tasks");
 
         // Perform the bulkWrite operation
     app.post('/add-user', async(req,res)=>{
@@ -38,6 +39,24 @@ async function run() {
         const alreadyExist = await userCollection.findOne(query)
         if(alreadyExist){return res.status(400).send('Already Exist')}
         const result = await userCollection.insertOne(user);
+        res.send(result)
+    })
+
+    app.post('/add-task', async(req,res)=>{
+        const task = req.body;
+        const result = await taskCollection.insertOne(task);
+        res.send(result)
+    })
+
+    app.get('/tasks', async(req,res)=>{
+        const result = await taskCollection.find().toArray();
+        res.send(result)
+    })
+
+    app.delete('/task/:id', async(req,res)=>{
+        const id = req.params.id;
+        const query = {_id: new ObjectId(id)}
+        const result = await taskCollection.deleteOne(query);
         res.send(result)
     })
 
