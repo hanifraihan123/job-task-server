@@ -60,6 +60,29 @@ async function run() {
         res.send(result)
     })
 
+    app.get('/task/:id', async(req,res)=>{
+        const id = req.params.id;
+        const query = {_id: new ObjectId(id)}
+        const result = await taskCollection.findOne(query);
+        res.send(result)
+    })
+
+    app.patch('/task/:id', async(req,res)=>{
+        const id = req.params.id;
+        const tasks = req.body
+        console.log(tasks)
+        const query = {_id: new ObjectId(id)}
+        const update = {
+            $set: {
+                title: tasks.title,
+                description: tasks.details,
+                category: tasks.category
+              }
+        }
+        const result = await taskCollection.updateOne(query, update);
+        res.send(result)
+    })
+
     } finally {
       // Ensures that the client will close when you finish/error
     //   await client.close();
